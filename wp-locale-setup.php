@@ -14,6 +14,7 @@
   if(!class_exists("wp_locale_root_class")){
     class wp_locale_root_class{
       public function __construct(){
+	add_action( 'init', array($this,'load_textdomain' ));
         add_filter('the_content', array($this, 'the_content_callback'));
         add_action('admin_menu', array($this, 'wp_locale_menu_setup'));
         add_action('admin_notices', array($this, 'show_motivation_text'));
@@ -23,7 +24,7 @@
         add_menu_page('Locale Admin', 'locale title', 'manage_options', 'translator_settings', array($this, 'locale_text_disaplay'));
       }
       public function locale_text_disaplay(){
-        echo "hello world";
+        echo __('hello world','wp-locale-setup');
       }
       public function the_content_callback($content){
         $locale_text = "Hello world";
@@ -31,11 +32,11 @@
       }
       public function get_motivation_text(){
         $motivation = array(
-          'you are awesome',
-          'This website is boss',
-          'You look great today',
-          'Your earlobes are well rounded, good job!'
-        );
+	__( 'You are awesome', 'wp-locale-setup'),
+	__( 'This website is boss', 'wp-locale-setup'),
+	__( 'You look great today', 'wp-locale-setup'),
+	__( 'Your earlobes are well rounded, good job!, 'wp-locale-setup')
+	);
         shuffle( $motivation );
 
         return $motivation[0];
@@ -46,7 +47,9 @@
         echo "<p id='wp-admin-motivation'>$text</p>";
       }
 
-
+      public function load_textdomain(){
+	load_plugin_textdomain( 'plugin_translator', false, basename( dirname( __FILE__ ) ) . '/language/' );
+      }
 
 
       public function write_log ( $log )  {
